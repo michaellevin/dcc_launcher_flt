@@ -1,41 +1,50 @@
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
+import 'dart:developer';
 import 'package:window_manager/window_manager.dart';
-// import 'package:window_size/window_size.dart' as window_size;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logging/logging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    // setWindowTitle('Dcc Launcher');
-    // min_width = 600;
-    // min_height = 800;
-    // // setWindowMaxSize(const Size(max_width, max_height));
-    // setWindowMinSize(const Size(min_width, min_height));
-    WidgetsFlutterBinding.ensureInitialized();
-    await windowManager.ensureInitialized();
-    if (Platform.isWindows) {
-      WindowManager.instance.setMinimumSize(const Size(400, 600));
-      WindowManager.instance.setMaximumSize(const Size(600, 800));
+    windowManager.setTitle('DCC Launcher v0.2.0');
+    windowManager.setIcon('assets/icons/launcher_icon.png');
+    windowManager.setMinimumSize(const Size(400, 600));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Restore size and position
+    Size size = Size(
+      prefs.getDouble('windowWidth') ?? 400,
+      prefs.getDouble('windowHeight') ?? 600,
+    );
+    Offset position = Offset(
+      prefs.getDouble('windowX') ?? -1,
+      prefs.getDouble('windowY') ?? -1,
+    );
+    log('saved size: $size.toString()');
+    log('saved position: $position.toString()');
+
+    if (position.dx != -1 && position.dy != -1) {
+      windowManager.setPosition(position);
     }
+    windowManager.setSize(size);
+
+    // WindowOptions windowOptions = const WindowOptions(
+    //   // size: Size(400, 600),
+    //   // center: true,
+    //   backgroundColor: Colors.transparent,
+    // );
+    // windowManager.waitUntilReadyToShow(windowOptions, () async {
+    //   await windowManager.show();
+    //   await windowManager.focus();
+    // });
   }
 
   runApp(const DccLauncherApp());
 }
-
-// void setInitialWindowSize() {
-//   window_size.getWindowInfo().then((window) {
-//     if (window.screen != null) {
-//       final screenFrame = window.screen!.visibleFrame;
-//       final width = 600.0;
-//       final height = 800.0;
-//       final left = ((screenFrame.width - width) / 2).roundToDouble();
-//       final top = ((screenFrame.height - height) / 3).roundToDouble();
-//       final frame = Rect.fromLTWH(left, top, width, height);
-//       window_size.setWindowFrame(frame);
-//     }
-//   });
-// }
 
 class DccLauncherApp extends StatefulWidget {
   const DccLauncherApp({Key? key})
@@ -45,8 +54,34 @@ class DccLauncherApp extends StatefulWidget {
   DccLauncherAppState createState() => DccLauncherAppState();
 }
 
-class DccLauncherAppState extends State<DccLauncherApp> {
+class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
   int _selectedIndex = 0;
+  final logger = Logger('DccLauncherApp');
+
+  @override
+  void initState() {
+    super.initState();
+
+    Logger.root.level = Level.FINE;
+    Logger.root.onRecord.listen((record) {
+      log('${record.level.name}: ${record.time}: ${record.message}');
+    });
+
+    windowManager.addListener(this);
+    _init();
+  }
+
+  void _init() async {
+    // Add this line to override the default close handler
+    await windowManager.setPreventClose(true);
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
 
   Widget _buildIconButton(String iconName, int index) {
     return SizedBox(
@@ -96,5 +131,26 @@ class DccLauncherAppState extends State<DccLauncherApp> {
         ),
       ),
     );
+  }
+
+  @override
+  void onWindowEvent(String eventName) {
+    log('[WindowManager] onWindowEvent: $eventName');
+  }
+
+  @override
+  void onWindowClose() async {
+    final windowSize = await windowManager.getSize();
+    final windowPosition = await windowManager.getPosition();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('windowWidth', windowSize.width);
+    await prefs.setDouble('windowHeight', windowSize.height);
+    await prefs.setDouble('windowX', windowPosition.dx);
+    await prefs.setDouble('windowY', windowPosition.dy);
+    logger.fine('Closing window..');
+    logger.fine('Saved window size: $windowSize');
+    logger.fine('Saved window position: $windowPosition');
+    await windowManager.destroy();
   }
 }
