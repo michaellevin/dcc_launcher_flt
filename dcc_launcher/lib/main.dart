@@ -93,10 +93,34 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
             _selectedIndex = index;
           });
         },
+        // style: ElevatedButton.styleFrom(
+        //   padding: EdgeInsets.zero, // Remove padding
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.circular(0), // Square shape
+        //   ),
+        // ),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero, // Remove padding
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0), // Square shape
+          ),
+          backgroundColor: Colors.transparent, // Normal state color
+          disabledForegroundColor: Colors.red, // Color when button is disabled
+          foregroundColor: Colors.white, // Color when button is pressed
+          shadowColor: Colors.transparent, // No shadow
+        ).copyWith(
+          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+              if (states.contains(MaterialState.pressed)) {
+                return Color.fromARGB(
+                    255, 147, 128, 159); // Color when button is pressed
+              }
+              if (index == _selectedIndex) {
+                return Color.fromARGB(
+                    255, 146, 152, 198); // Color for the selected button
+              }
+              return null; // Use the default value
+            },
           ),
         ),
         child: Image.asset(
@@ -121,8 +145,19 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
               ],
             ),
             Container(
-              width: 1,
-              color: Color.fromARGB(255, 220, 220, 220),
+              width: 4,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color.fromARGB(255, 146, 152, 198),
+                    Color.fromARGB(85, 146, 152, 198),
+                    Colors.transparent, // End color is transparent
+                  ],
+                  stops: [0.0, 0.5, 1],
+                ),
+              ),
               height: double.infinity,
             ),
             Expanded(
