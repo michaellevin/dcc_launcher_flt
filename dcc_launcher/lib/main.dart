@@ -112,12 +112,18 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
         body: Row(
           children: <Widget>[
             Column(
-              mainAxisSize: MainAxisSize.min,
+              // mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                const SizedBox(height: 2),
                 _buildIconButton('docs-icon', 0),
                 _buildIconButton('apps-icon', 1),
               ],
+            ),
+            Container(
+              width: 1,
+              color: Color.fromARGB(255, 220, 220, 220),
+              height: double.infinity,
             ),
             Expanded(
               child: Container(
