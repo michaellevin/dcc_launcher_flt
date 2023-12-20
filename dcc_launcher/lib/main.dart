@@ -10,6 +10,7 @@ import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:dcc_launcher/core/pdf_file_provider.dart';
 import 'package:dcc_launcher/ui/list_view.dart';
 import 'package:dcc_launcher/ui/pdf_view/pdf_item.dart';
+import 'package:dcc_launcher/ui/tab_button.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +64,12 @@ class DccLauncherApp extends StatefulWidget {
 class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
   int _selectedIndex = 0;
   List<String> _pdfList = [];
+  void _handleTabSelection(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   final logger = Logger('DccLauncherApp');
 
   @override
@@ -99,50 +106,9 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
     super.dispose();
   }
 
-  Widget _buildIconButton(String iconName, int index) {
-    return SizedBox(
-      width: 36,
-      height: 36,
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero, // Remove padding
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0), // Square shape
-          ),
-          backgroundColor: Colors.transparent, // Normal state color
-          disabledForegroundColor: Colors.red, // Color when button is disabled
-          foregroundColor: Colors.white, // Color when button is pressed
-          shadowColor: Colors.transparent, // No shadow
-        ).copyWith(
-          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.pressed)) {
-                return const Color.fromARGB(
-                    255, 147, 128, 159); // Color when button is pressed
-              }
-              if (index == _selectedIndex) {
-                return const Color.fromARGB(
-                    255, 146, 152, 198); // Color for the selected button
-              }
-              return null; // Use the default value
-            },
-          ),
-        ),
-        child: Image.asset(
-            'assets/icons/$iconName.png'), // Use the correct asset path
-      ),
-    );
-  }
-
   Widget _setTabContent() {
     switch (_selectedIndex) {
       case 0:
-        // return _listViewBuilder();
         return CustomListView(_pdfList, itemBuilder: PdfItem.new);
       case 1:
         return const Text('Content 22');
@@ -162,8 +128,16 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 const SizedBox(height: 2),
-                _buildIconButton('docs-icon', 0),
-                _buildIconButton('apps-icon', 1),
+                tabButton(
+                    iconName: 'docs-icon',
+                    index: 0,
+                    onTabSelected: _handleTabSelection,
+                    isSelected: _selectedIndex == 0),
+                tabButton(
+                    iconName: 'apps-icon',
+                    index: 1,
+                    onTabSelected: _handleTabSelection,
+                    isSelected: _selectedIndex == 1),
               ],
             ),
             Container(
