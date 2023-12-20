@@ -1,12 +1,15 @@
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform, Directory, FileSystemEntity;
 import 'dart:developer';
 import 'package:window_manager/window_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logging/logging.dart';
-
 import 'package:cupertino_icons/cupertino_icons.dart';
+
+import 'package:dcc_launcher/core/pdf_file_provider.dart';
+import 'package:dcc_launcher/ui/list_view.dart';
+import 'package:dcc_launcher/ui/pdf_view/pdf_item.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,8 +62,8 @@ class DccLauncherApp extends StatefulWidget {
 
 class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
   int _selectedIndex = 0;
-  final logger = Logger('DccLauncherApp');
   List<String> _pdfList = [];
+  final logger = Logger('DccLauncherApp');
 
   @override
   void initState() {
@@ -73,9 +76,13 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
     });
 
     // Get list of PDF files
-    _getPdfList();
+    getPdfList((String str) {
+      setState(() {
+        _pdfList = [..._pdfList, str];
+      });
+    });
 
-    // Add listener
+    // Add window listener
     windowManager.addListener(this);
     _init();
   }
@@ -90,20 +97,6 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
   void dispose() {
     windowManager.removeListener(this);
     super.dispose();
-  }
-
-  void _getPdfList() {
-    final dir = Directory('assets/docs');
-    final List<FileSystemEntity> entities = dir.listSync();
-    for (var element in entities) {
-      if (element.path.endsWith('.pdf')) {
-        // logger.fine(element.path);
-        // print("123");
-        setState(() {
-          _pdfList = [..._pdfList, element.path];
-        });
-      }
-    }
   }
 
   Widget _buildIconButton(String iconName, int index) {
@@ -146,30 +139,11 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
     );
   }
 
-  Widget _buildPdfItem(String pdfFile) {
-    return ListTile(
-      // leading: const Icon(Icons.picture_as_pdf),
-      leading: const Icon(CupertinoIcons.book, color: Colors.blue),
-      title: Text(pdfFile.replaceAll("\\", "/").split('/').last),
-      onTap: () {
-        // Open the PDF file
-      },
-    );
-  }
-
-  Widget _listViewBuilder() {
-    return ListView.builder(
-      itemCount: _pdfList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return _buildPdfItem(_pdfList[index]);
-      },
-    );
-  }
-
   Widget _setTabContent() {
     switch (_selectedIndex) {
       case 0:
-        return _listViewBuilder();
+        // return _listViewBuilder();
+        return CustomListView(_pdfList, itemBuilder: PdfItem.new);
       case 1:
         return const Text('Content 22');
       default:
