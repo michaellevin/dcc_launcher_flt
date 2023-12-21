@@ -35,7 +35,7 @@ void main() async {
     log('saved position: $position.toString()');
 
     if (position.dx != -1 && position.dy != -1) {
-      windowManager.setPosition(position);
+      // windowManager.setPosition(position);
     }
     windowManager.setSize(size);
 

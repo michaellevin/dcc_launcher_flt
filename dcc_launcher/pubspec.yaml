@@ -40,6 +40,7 @@ dependencies:
   #     ref: '4be9de9ffed5398fd7d5f44bbb07dcd3d3f1711b'
   #     path: 'packages/pdfx'
   syncfusion_flutter_pdfviewer: 
+  url_launcher: 
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
