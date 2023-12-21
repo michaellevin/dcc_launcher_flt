@@ -11,6 +11,7 @@ import 'package:dcc_launcher/core/pdf_file_provider.dart';
 import 'package:dcc_launcher/ui/list_view.dart';
 import 'package:dcc_launcher/ui/pdf_view/pdf_item.dart';
 import 'package:dcc_launcher/ui/tab_button.dart';
+import 'package:dcc_launcher/ui/ui_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,7 +112,7 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
       case 0:
         return CustomListView(_pdfList, itemBuilder: PdfItem.new);
       case 1:
-        return const Text('Content 22');
+        return AppLauncherWidget();
       default:
         return const Text('Hello world');
     }
@@ -120,6 +121,7 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.dark(),
       home: Scaffold(
         body: Row(
           children: <Widget>[

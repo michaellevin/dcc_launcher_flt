@@ -70,7 +70,16 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - assets/icons/
+    - assets/icons/apps-icon.png
+    - assets/icons/docs-icon.png
+    - assets/icons/launcher-icon.png
+    - assets/icons/maya.png
+    - assets/icons/houdini.png
+    - assets/icons/nuke.png
+    - assets/icons/after_effects.png
+    - assets/icons/blender.png
+    - assets/icons/djv.png
+
     - assets/docs/
     
     # - assets/docs/1904_Casopis_za_zgodovino_in_narodopisje.pdf
