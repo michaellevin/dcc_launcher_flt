@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // import 'package:pdfx/pdfx.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import 'package:dcc_launcher/ui/list_item.dart';
+import 'package:dcc_launcher/core/pdf_file_provider.dart';
 
 class PdfItem extends ListItem {
   final String pdfPath;
@@ -21,28 +21,6 @@ class PdfItem extends ListItem {
     path = path.replaceAll('\\', '/');
     String title = path.split('/').last;
     return PdfItem._(path, title, key);
-  }
-
-  Future<void> openPdfWithExternalApplication(String relativePath) async {
-    // Construct the full path based on where your application runs.
-    // This path construction will vary based on your application's deployment and file structure.
-    String fullPath = '${Directory.current.path}/$relativePath';
-
-    if (Platform.isWindows) {
-      fullPath = fullPath.replaceAll('/', '\\');
-    }
-    print(fullPath);
-    final file = File(fullPath);
-
-    if (await file.exists()) {
-      final uri = Uri.file(file.path);
-
-      if (!await launchUrl(uri)) {
-        print('Could not launch $uri');
-      }
-    } else {
-      print('File does not exist at path: $fullPath');
-    }
   }
 
   @override
