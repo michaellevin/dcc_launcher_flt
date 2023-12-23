@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform, Directory, FileSystemEntity;
 import 'dart:developer';
-import 'package:window_manager/window_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:yaml/yaml.dart';
 import 'package:logging/logging.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
+// import 'package:cupertino_icons/cupertino_icons.dart';
 
+import 'package:dcc_launcher/core/config.dart';
 import 'package:dcc_launcher/core/pdf_file_provider.dart';
 import 'package:dcc_launcher/ui/list_view.dart';
 import 'package:dcc_launcher/ui/pdf_view/pdf_item.dart';
@@ -63,8 +65,9 @@ class DccLauncherApp extends StatefulWidget {
 }
 
 class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   List<String> _pdfList = [];
+  YamlMap? _config;
   void _handleTabSelection(int index) {
     setState(() {
       _selectedIndex = index;
@@ -81,6 +84,14 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
     Logger.root.level = Level.FINE;
     Logger.root.onRecord.listen((record) {
       log('${record.level.name}: ${record.time}: ${record.message}');
+    });
+
+    // Load config
+    loadConfig().then((YamlMap yamlMap) {
+      // logger.fine('Loaded config: $yamlMap');
+      setState(() {
+        _config = yamlMap; // Set config and rebuild
+      });
     });
 
     // Get list of PDF files
@@ -112,7 +123,12 @@ class DccLauncherAppState extends State<DccLauncherApp> with WindowListener {
       case 0:
         return CustomListView(_pdfList, itemBuilder: PdfItem.new);
       case 1:
-        return AppLauncherWidget();
+        // return AppLauncherWidget(config: _config!);
+        return Scaffold(
+          body: _config == null
+              ? const CircularProgressIndicator()
+              : AppLauncherWidget(config: _config!),
+        );
       default:
         return const Text('Hello world');
     }
