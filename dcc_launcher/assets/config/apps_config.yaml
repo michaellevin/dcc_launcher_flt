@@ -1,0 +1,40 @@
+global_environment:
+  - SOME_VAR: some_value
+
+applications:
+  - name: Maya
+    version: 2024
+    icon: assets/icons/maya.png
+    windows_executable: C:/Program Files/Autodesk/Maya2024/bin/maya.exe
+    environment:
+      - PYTHONPATH: C:/Program Files/Autodesk/Maya2024/Python/Lib/site-packages
+
+  - name: Houdini
+    version: 19.5.773
+    icon: assets/icons/houdini.png
+    windows_executable: C:/Program Files/Side Effects Software/Houdini 19.5.773/bin/houdini.exe
+    environment: 
+
+  - name: Blender
+    version: 4.0.2
+    icon: assets/icons/blender.png
+    windows_executable: C:/Program Files/Blender Foundation/Blender 4.0/blender.exe
+    environment: 
+
+  - name: Nuke
+    version: 14.0v1
+    icon: assets/icons/nuke.png
+    windows_executable: C:/Program Files/Nuke14.0v1/Nuke14.0.exe
+    environment: 
+
+  - name: After Effects
+    version: 2023
+    icon: assets/icons/after_effects.png
+    windows_executable: C:/Program Files/Adobe/Adobe After Effects 2023/Support Files/AfterFX.exe
+    environment: 
+
+utilities:
+  - name: DJV
+    version: 2.0.8
+    icon: assets/icons/djv.png
+    windows_executable: C:/Program Files/DJV2/bin/djv.exe
