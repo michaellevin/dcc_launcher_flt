@@ -41,6 +41,8 @@ dependencies:
   #     path: 'packages/pdfx'
   syncfusion_flutter_pdfviewer: 
   url_launcher: 
+  path_provider:
+  yaml: 
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
@@ -81,6 +83,8 @@ flutter:
     - assets/icons/djv.png
 
     - assets/docs/
+
+    - assets/config/apps_config.yaml
     
     # - assets/docs/1904_Casopis_za_zgodovino_in_narodopisje.pdf
     # - assets/docs/Feldbach_1.pdf
